@@ -15,7 +15,7 @@ const MIME_TYPES = {
     txt: 'text/plain',
 };
 
-const STATIC_PATH = path.join(process.cwd(), './static');
+const STATIC_PATH = path.join(process.cwd(), './src/frontend/static');
 
 const toBool = [() => true, () => false];
 

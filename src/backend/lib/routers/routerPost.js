@@ -20,6 +20,12 @@ const routerPost = async (client) => {
         res.writeHead(client.objectHeaders.objectStatusCode, client.objectHeaders.obj);
         res.end('You have been registered!')
     }
+    if(url === '/api/post/registration' && method === 'POST'){
+        const string = await post(req, res);
+        console.log(string);
+        
+        res.end(string)
+    }
 }
 
 module.exports = routerPost

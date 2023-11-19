@@ -13,11 +13,11 @@ const routerStatic = async (client) => {
     //res.writeHead(statusCode, mimeType);
     client.sendCookie();
 
-    console.log('routerStatic');
+    //console.log('routerStatic');
 
     //res.writeHead(statusCode, obj)
     file.stream.pipe(res);
-    console.log(`${req.method} ${req.url} ${statusCode}`);
+    //console.log(`${req.method} ${req.url} ${statusCode}`);
 }
 
 module.exports = routerStatic;
