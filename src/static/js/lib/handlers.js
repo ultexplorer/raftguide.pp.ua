@@ -1,27 +1,76 @@
 import { aBuildModal } from "./modal";
-import {loginForm, registrationForm} from "./form";
+import {loginForm, registrationForm, emailNotRFoundForm, successLoginForm } from "./form";
 import { isValidLong } from "./validators";
-import { registrationNewUser } from "./requests";
+import { serverAccessUser } from "./requests";
+
 
 // Вызов формы логин-регистрациии
 export async function loginRegistrationHandler(event){
-    event.preventDefault()
-    await /*aAuthorizationHandler*/aBuildModal(loginForm.title, loginForm.html, loginForm.id, loginForm.modalClass)
-    const btnLogin = document.getElementById('login-btn')
+    event.preventDefault();
+
+    await aBuildModal(loginForm)
+    const btnLogin = document.getElementById('login-btn');
+    const inputEmail = document.getElementById('email');
     const inputPassword = document.getElementById('password');
-    inputPassword.addEventListener('input', () => {
-        btnLogin.disabled = !isValidLong(inputPassword.value, 7)
+    ////////////////////////////////////////////////////////////
+    
+    ///////////////////////////////////////////////////////////////19
+    btnLogin.disabled = true;
+    let buttonKey = 0;
+    let sw1 = true
+    ///////////////////////////////////////////////////////////////19
+    inputEmail.addEventListener('input', () => {
+        if(isValidLong(inputEmail.value, 3) && sw1 === true){
+            buttonKey+=1;
+            sw1 = false;
+            console.log('buttonKey:', buttonKey)
+        }
     })
+    let sw2 = true;
+    inputPassword.addEventListener('input', () => {
+        if(isValidLong(inputPassword.value, 7) && sw2 === true){
+            buttonKey+=1;
+            sw2 = false;
+            console.log('buttonKey:', buttonKey)
+            if(buttonKey === 2) btnLogin.disabled = false;
+        }
+    })
+    //------------ЛОГИН LISTENER BTN--------------------------
+
+    //---|----------|------------------|----------|--------|--
     btnLogin.addEventListener('click', async (event ) => {
         btnLogin.disabled = true;
-        await loginHandler(event);
+        //console.log(inputEmail.value, inputPassword.value)
+        const answer = await loginHandler(event);
+        console.log(answer)
+        console.log('answer:', answer)
+        if(answer === 'not found'){
+            await aBuildModal(emailNotRFoundForm)
+            const btnRegistration = document.getElementById('registration')
+            btnRegistration.addEventListener('click', async (event) => {
+            await callRegistrationFormHandler(event);
+          })
+        }else{
+            const user = answer.nickName;
+            console.log('from btnLogin user:', user)
+            await aBuildModal(successLoginForm)
+        }
     });
+
+    
+////////////////////////////////////////////////////////////
+
+
     const btnRegistration = document.getElementById('registration')
     btnRegistration.addEventListener('click', async (event) => {
-        callRegistrationFormHandler(event)
+        await callRegistrationFormHandler(event)
     })
 }
 
+
+//               #                              #
+// ЛОГИН HANDLER-|-------ЛОГИН HANDLER------ ---|---------ЛОГИН HANDLER--------
+//               *                              *
 // отправка данных формой login:  (login/password)
 async function loginHandler (event) {
     event.preventDefault();
@@ -30,20 +79,31 @@ async function loginHandler (event) {
     if(isValidLong(password, 7)){
         const data = { email, password };
         
-        //console.log(data);
+        console.log(data);
+
         document.getElementById('email').value = ''
         document.getElementById('email').className = ''
         document.getElementById('password').value = ''
         document.getElementById('password').className = ''
         // Async request to server to save question
+        const answerFromServer = await serverAccessUser('/api/post/login', data);
+        ///////////////////////получил ответ с сервера
+        const respond = await answerFromServer.json();
+        console.log('respond from loginHandler:', respond)
+        // здесь от ответа с сервера надо создать функцию для дальнейших действий
+        return respond
+        //-----------------------------------------------------------------------
 
     }
 }
+//          ^
+//----------|---------------END LOGIN-------------------------------------------
 
 // Вызов формы регистрации
 async function callRegistrationFormHandler (event) {
     event.preventDefault()
-    await aBuildModal(registrationForm.title, registrationForm.html, registrationForm.id, registrationForm.modalClass);
+    await aBuildModal(registrationForm);
+
     const sendRegistrationBtn = document.getElementById('send-registration');
     sendRegistrationBtn.disabled = true;
     //Валидация
@@ -54,25 +114,33 @@ async function callRegistrationFormHandler (event) {
     let sw1 = true
     sendRegistrationBtn.disabled = true;
     inputYourName.addEventListener('input', () => {
-        //sendRegistrationBtn.disabled = !isValidLong(inputYourName.value, 3)
+        
         if(isValidLong(inputYourName.value, 3) && sw1 === true){
-            buttonKey+=10;
+            buttonKey+=1;
             sw1 = false;
             console.log('buttonKey:', buttonKey)
         }
     })
     let sw2 = true;
     inputPassword.addEventListener('input', () => {
-        //sendRegistrationBtn.disabled = !isValidLong(inputPassword.value, 7)
+        
         if(isValidLong(inputPassword.value, 7) && sw2 === true){
-            buttonKey+=10;
+            buttonKey+=1;
             sw2 = false;
+            console.log('buttonKey:', buttonKey)
+        }
+    })
+    let sw3 = true;
+    inputCheckPassword.addEventListener('input', () => {
+        if(isValidLong(inputCheckPassword.value, 7) && sw3 === true){
+            buttonKey+=1;
+            sw3 = false;
             console.log('buttonKey:', buttonKey)
         }
     })
     inputCheckPassword.addEventListener('input', () => {
         let even = (document.getElementById('password').value === document.getElementById('check-password').value);
-        if(buttonKey === 20 && even){
+        if(buttonKey === 3 && even){
             sendRegistrationBtn.disabled = false;
         }
     })
@@ -96,18 +164,13 @@ async function sendRegistrationFormHandler (event){
     const checkPassword = document.getElementById('check-password').value;
 
     const data = { yourName, email, password, checkPassword };
-    registrationNewUser('/api/post/registration', data).then(data => data.json())
+    serverAccessUser('/api/post/registration', data).then(data => data.json())
     .then(data => {
-        const div = document.getElementById('test-data');
-        const p = document.createElement('p');
-        p.innerHTML = JSON.stringify(data)
-        div.insertAdjacentElement('beforebegin', p)
+        document.getElementById('your-name').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('check-password').value = '';
+        console.log(data)
     })
-
-    //console.log(data)   
-
-    document.getElementById('your-name').value = '';
-    document.getElementById('email').value = '';
-    document.getElementById('password').value = '';
-    document.getElementById('check-password').value = '';
 }
+

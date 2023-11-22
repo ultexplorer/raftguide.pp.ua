@@ -1,6 +1,8 @@
 const { post, formStringToObject } = require('../httpMethods')
 
 const Session = require("../cookies/session");
+const {checkEmailForLogin, registrationNewUser} = require("../connection_db/sqlquery");
+
 
 
 const routerPost = async (client) => {
@@ -21,10 +23,27 @@ const routerPost = async (client) => {
         res.end('You have been registered!')
     }
     if(url === '/api/post/registration' && method === 'POST'){
-        const string = await post(req, res);
-        console.log(string);
+        const stringData = await post(req, res);
         
-        res.end(string)
+        const obj = JSON.parse(stringData);
+
+        ///Вызываю функцию обращения к базе данных:
+
+        const respond = await registrationNewUser(obj);
+        console.log(respond)
+        res.end(JSON.stringify(respond))
+    }
+    if(url === '/api/post/login' && method === 'POST'){
+        let stringData = await post(req, res);
+        const obj = JSON.parse(stringData);
+
+        ///Вызываю функцию обращения к базе данных:
+       
+        const respond = await checkEmailForLogin(obj)
+
+        /// Возвращаю ответ на frontend
+
+        res.end(JSON.stringify(respond))
     }
 }
 
