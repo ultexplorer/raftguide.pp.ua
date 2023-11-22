@@ -88,13 +88,31 @@ const registrationForm = new Form('Регистрация',
         'modal'
     )
 
+   
     const successLoginForm = new Form(
-        "Приветсвую!",
+        "Приветствую!",
         "form-success-login",
         `<div id="form-success-login">
-        <p>Вы зашли на сайт под именем <h3>%</h3></p>
+        <p>Вы зашли на сайт под именем </p>
         </div>`,
+        'modal',
+    )
+
+    const successRegistrationForm = new Form(
+        "Поздравляю!",
+        "form-success-login",
+        `<div id="form-success-login">
+        <p>Вы зарегестрировались на сайте под именем </p>
+        </div>`,
+        'modal',
+    )
+
+    const errorRegistrationForm = new Form(
+        "Ошибка при регистрации:",
+        "form-reg-error",
+        ``,
         'modal'
     )
 
-export { loginForm, registrationForm,  emailNotRFoundForm, successLoginForm }
+
+export { loginForm, registrationForm,  emailNotRFoundForm, successLoginForm, errorRegistrationForm, successRegistrationForm }

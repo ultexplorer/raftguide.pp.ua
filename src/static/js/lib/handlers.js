@@ -1,5 +1,6 @@
 import { aBuildModal } from "./modal";
-import {loginForm, registrationForm, emailNotRFoundForm, successLoginForm } from "./form";
+import {loginForm, registrationForm, emailNotRFoundForm, 
+    successLoginForm, errorRegistrationForm, successRegistrationForm } from "./form";
 import { isValidLong } from "./validators";
 import { serverAccessUser } from "./requests";
 
@@ -53,7 +54,7 @@ export async function loginRegistrationHandler(event){
         }else{
             const user = answer.nickName;
             console.log('from btnLogin user:', user)
-            await aBuildModal(successLoginForm)
+            await aBuildModal(successLoginForm, user)
         }
     });
 
@@ -164,13 +165,23 @@ async function sendRegistrationFormHandler (event){
     const checkPassword = document.getElementById('check-password').value;
 
     const data = { yourName, email, password, checkPassword };
-    serverAccessUser('/api/post/registration', data).then(data => data.json())
-    .then(data => {
-        document.getElementById('your-name').value = '';
-        document.getElementById('email').value = '';
-        document.getElementById('password').value = '';
-        document.getElementById('check-password').value = '';
-        console.log(data)
-    })
+    const answerFromServer = await serverAccessUser('/api/post/registration', data).then(data => data.json())
+    
+   console.log(answerFromServer)
+   const errors = answerFromServer.error;
+   if(errors){
+        const keys = Object.keys(errors);
+        const errorType = {
+            uniqueEmail: 'такой email уже существует.',
+            uniqueNickname: 'такой nickname уже существует.'
+        }
+        const errorMessage = errorType[keys[0]]
+        console.log(errorMessage)
+        await aBuildModal(errorRegistrationForm, '', errorMessage)
+   }else {
+      const user = answerFromServer.yourName;
+      await aBuildModal(successRegistrationForm, user)
+   }
+   
 }
 
