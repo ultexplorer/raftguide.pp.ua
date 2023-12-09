@@ -1,4 +1,3 @@
-
 class Form {
     constructor(title, id, html, modalClass) {
         this.title = title;
@@ -67,8 +66,8 @@ const registrationForm = new Form('Регистрация',
               </form>`,
     'modalRegistration');
 
-    const emailNotRFoundForm = new Form(
-        "Email не найден",
+    const emailNotFoundForm = new Form(
+        `<div class="loader"></div> Email не найден`,
         "form-no-email",
         `<div><div class="float-left"><h2>Зарегестрируйтесь!</h2></div>
         <div class="float-right">
@@ -82,15 +81,17 @@ const registrationForm = new Form('Регистрация',
                         >Регистрация</button>
                         
         </form>
+        
+        </div>   
         </div>
-        </div>
+         
         `,
         'modal'
     )
 
    
     const successLoginForm = new Form(
-        "Приветствую!",
+        `<div class="loader"></div>Приветствую!`,
         "form-success-login",
         `<div id="form-success-login">
         <p>Вы зашли на сайт под именем </p>
@@ -99,7 +100,7 @@ const registrationForm = new Form('Регистрация',
     )
 
     const successRegistrationForm = new Form(
-        "Поздравляю!",
+        `<div class="loader"></div>Поздравляю!`,
         "form-success-login",
         `<div id="form-success-login">
         <p>Вы зарегестрировались на сайте под именем </p>
@@ -114,5 +115,20 @@ const registrationForm = new Form('Регистрация',
         'modal'
     )
 
+    const errorLoginFormWrongPassword = new Form(
+        "Неверный emaqk или пароль!",
+        "form-reg-error",
+        ` <div class="loader"></div> `,
+        'modal'
+    )
 
-export { loginForm, registrationForm,  emailNotRFoundForm, successLoginForm, errorRegistrationForm, successRegistrationForm }
+    const logOutForm = new Form(
+        `<div class="loader"></div>Вы вышли из системы.`,
+        "form-reg-error",
+        ``,
+        'modal'
+    )
+
+
+export { loginForm, registrationForm,  emailNotFoundForm, successLoginForm, errorRegistrationForm, 
+    successRegistrationForm, errorLoginFormWrongPassword, logOutForm }

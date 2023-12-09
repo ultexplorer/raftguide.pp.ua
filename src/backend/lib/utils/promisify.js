@@ -1,19 +1,13 @@
-function promisify(f) {
-    return function (...args) { // возвращает функцию-обёртку
-        return new Promise((resolve, reject) => {
-            function callback(err, result) { // наш специальный колбэк для f
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(result);
-                }
-            }
+const fs = require('fs');
+const path = require('path');
+const PATH = path.resolve(__dirname, 'sessions')
 
-            args.push(callback); // добавляем колбэк в конец аргументов f
+const promisify = (fn) => (...args) => new Promise((resolve, reject) => {
+    args.push((err, data) => {
+        if(err) reject(err)
+        else resolve(data);
+    })
+    fn(...args)
+})
 
-            f.call(this, ...args); // вызываем оригинальную функцию
-        });
-    };
-};
-
-module.exports = promisify
+module.exports = { promisify }

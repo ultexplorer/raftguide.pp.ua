@@ -1,4 +1,3 @@
-
 // вызов модального окна с классом css: modalClass, h1 = title, content = html
 export function pCreateModal(title, html, modalClass, user, error){
     return new Promise((resolve, reject) => {
@@ -17,5 +16,3 @@ export async function aBuildModal (form, user='', error=''/*text, form, id, moda
     const modalClass = form.modalClass;
     await pCreateModal(title, html, modalClass, user, error); // Жду создания модального окна в DOM на странице вызова модального окна...
 }
-
-

@@ -1,71 +1,61 @@
 'use strict';
-
+const { promisify } = require('../utils/promisify')
 const fs = require('node:fs');
 const path = require('node:path');
 const v8 = require('node:v8');
-const { promisify } = require('../utils')
 const PATH = `${__dirname}/sessions`;
 
 const safePath = fn => (token, ...args) => {
-    return new Promise((resolve, reject) => {
-        if(typeof token !== 'string'){
-            reject(new Error('Wrong token!'))
-        }
-        const fileName = path.join(PATH, token);
-        if(!fileName.startsWith(PATH)){
-            reject(new Error('Wrong token!'))
-        }
-        const result = fn(fileName, ...args);
-        resolve(result);
-    })
+    if(typeof token !== 'string'){
+        throw new Error('wrong token')
+    }
+    const fileName = path.join(PATH, token);
+    if(!fileName.startsWith(PATH)){
+        console.log('fileName:', fileName)
+        throw new Error('wrong token path')
+    }
+    return fn(fileName, ...args)
 }
 
-const promiseReadFile = promisify(fs.readFile);
-const promiseWriteFile = promisify(fs.writeFile);
-const promiseDeleteFile = promisify(fs.unlink);
-
-const readSession = safePath(promiseReadFile);
-const writeSession = safePath(promiseWriteFile);
-const deleteSession = safePath(promiseDeleteFile);
-
+const readSession = safePath((filename) => promisify(fs.readFile)(filename, 'utf8'))
+const writeSession = safePath(promisify(fs.writeFile))
+const deleteSession = safePath(promisify(fs.unlink))
 
 class Storage extends Map {
-    async get(key) {
-        const value = super.get(key);
-        if (value) {
-            return value;
-        }
-        const data = await readSession(key)
-        console.log(`Session loaded: ${key}`);
-        const session = v8.deserialize(data);
-        super.set(key, session);
-        return session;
-        };
+   async get(key){
+       let session = super.get(key);
+       if(session) return session;
+       else{
+           try{
+               const data = await readSession(key);
+               console.log('storage 43 data:', data)
+               session = v8.deserialize(data);
+               super.set(key, session);
+               return session;
+           }catch (err){
+               console.log(`Ошибка в readSession(key) ${err.name}:${err.message} \n ${err.stack}`)
+           }
+       }
+   };
 
-    async save(key){
-        const value = super.get(key);
-        if(value){
-            const data = v8.serialize(value)
-            await writeSession(key, data);
-            console.log(`Session saved: ${key}`);
-        }
-    }
+   async save(key){
+       const session = super.get(key);
+       if(session){
+           try{
+               const data = v8.serialize(session);
+               await writeSession(key, data);
+               console.log(`Session saved ${key}`);
+           }catch(err){
+               console.log(`Ошибка в writeSession(key) ${err.name}:${err.message} \n ${err.stack}`)
+           }
+       }
+   }
 
-    async delete(key){
-        await deleteSession(key);
-    }
+   delete(key){
+       console.log(`Session deleted: ${key}`)
+       deleteSession(key);
+   }
+
 }
 
-
-/*
-const storage = new Storage();
-(async ()=>{
-    storage.set('test', 'one two three')
-    //console.log(storage)
-    await storage.save('test')
-    const result = await storage.get('test')
-    console.log(result)
-    storage.delete('test')
-})()*/
-
-module.exports = new Storage()
+module.exports = new Storage();

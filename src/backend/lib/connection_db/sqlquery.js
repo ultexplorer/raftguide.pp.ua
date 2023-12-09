@@ -5,29 +5,47 @@ const sha1 = require('js-sha1');
 
 const pool = new Pool(config);
 
+
 async function checkEmailForLogin(obj){
     const email = obj.email;
     const sql = `SELECT * FROM users WHERE email=$1`;
     const { rows } = await pool.query(sql, [email]);
+    console.log('13 sqlquery rows:', rows)
     //pool.end();
     if(rows.length === 0){
         return 'not found';
     }else{
         const answer = await checkPassword(obj, rows);
         console.log(answer);
-        console.log('rows:', rows)
+        console.log('18 sqlquery rows:', rows)
         //return await checkPassword(obj, rows );
         return answer;
     }
 }
+
+async function loginQuery(obj){
+    const { email, password } = obj;
+    const sql = `SELECT * FROM users WHERE email=$1`;
+    const { rows } = await pool.query(sql, [email]);
+    //pool.end();
+    if(rows.length === 0){
+        return 'not found';
+    }else{
+        
+        return rows;
+    }
+}
+
+
 
 async function checkPassword(obj, rows){
     const password = obj.password;
     const passwordHashFromDb = rows[0].password;
     const passwordHash = sha1(password);
     if(passwordHash === passwordHashFromDb){
-        const nickName = rows[0].nickname;
-        return { passwordHash, passwordHashFromDb, nickName };
+        const nickname = rows[0].nickname;
+        const role_id = rows[0].role_id;
+        return {  nickname, role_id };
     }else{
         return 'wrong password'
     }
@@ -80,6 +98,14 @@ async function insertUser(nickName, email, password, role_id = 2){
     return 'ok'
 }
 
+//////////////////////////////////////Функции для страниц users
 
-module.exports = { checkEmailForLogin, registrationNewUser }
+async function userExistCheck(user){
+    //const sql = `SELECT * FROM users WHERE nickname=$1;`
+    const sql2 = `SELECT u.*, r.role_name FROM users u INNER JOIN roles r on u.role_id=r.id AND u.nickname=$1;`
+    const { rows } = await pool.query(sql2,[user]);
+    return rows;
+}
 
+
+module.exports = { checkEmailForLogin, registrationNewUser, userExistCheck, loginQuery }

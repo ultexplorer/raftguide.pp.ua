@@ -9,7 +9,7 @@
     })
 });*/
 
-module.exports = (req, res) => new Promise((resolve, reject) => {
+const post = (req, res) => new Promise((resolve, reject) => {
     let buffer = [];
     req.on('data', chunk => {
         buffer.push(chunk);
@@ -19,3 +19,5 @@ module.exports = (req, res) => new Promise((resolve, reject) => {
         resolve(result)
     })
 });
+
+module.exports = { post }

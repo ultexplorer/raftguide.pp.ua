@@ -1,5 +1,5 @@
-const path = require('path');
-const fs = require('fs');
+const path = require("node:path");
+const fs = require("node:fs");
 
 const MIME_TYPES = {
     default: 'application/octet-stream',
@@ -15,6 +15,7 @@ const MIME_TYPES = {
     txt: 'text/plain',
 };
 
+//const STATIC_PATH = path.join(process.cwd(), './../frontend/static');
 const STATIC_PATH = path.join(process.cwd(), './src/frontend/static');
 
 const toBool = [() => true, () => false];
@@ -32,4 +33,4 @@ const prepareFile = async (url) => {
     return { found, ext, stream };
 };
 
-module.exports = { prepareFile, MIME_TYPES }
+module.exports = { MIME_TYPES, STATIC_PATH, prepareFile }
