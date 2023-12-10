@@ -16,7 +16,6 @@ export async function formLoginValidator(){
         if(isValidLong(inputEmail.value, 3) && sw1 === true){
             buttonKey+=1;
             sw1 = false;
-            console.log('buttonKey:', buttonKey)
         }
     })
     let sw2 = true;
@@ -24,7 +23,6 @@ export async function formLoginValidator(){
         if(isValidLong(inputPassword.value, 7) && sw2 === true){
             buttonKey+=1;
             sw2 = false;
-            console.log('buttonKey:', buttonKey)
             if(buttonKey === 2) btnLogin.disabled = false;
         }
     })
@@ -46,7 +44,6 @@ export function valdatorInputRegistration(){
     if(isValidLong(inputYourName.value, 3) && sw1 === true){
         buttonKey+=1;
         sw1 = false;
-        console.log('buttonKey:', buttonKey)
     }
     })
     let sw2 = true;
@@ -55,7 +52,6 @@ export function valdatorInputRegistration(){
     if(isValidLong(inputPassword.value, 7) && sw2 === true){
         buttonKey+=1;
         sw2 = false;
-        console.log('buttonKey:', buttonKey)
     }
     })
     let sw3 = true;
@@ -63,7 +59,6 @@ export function valdatorInputRegistration(){
     if(isValidLong(inputCheckPassword.value, 7) && sw3 === true){
         buttonKey+=1;
         sw3 = false;
-        console.log('buttonKey:', buttonKey)
     }
     })
     inputCheckPassword.addEventListener('input', () => {

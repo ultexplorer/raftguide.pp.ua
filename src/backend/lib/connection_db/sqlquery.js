@@ -10,15 +10,10 @@ async function checkEmailForLogin(obj){
     const email = obj.email;
     const sql = `SELECT * FROM users WHERE email=$1`;
     const { rows } = await pool.query(sql, [email]);
-    console.log('13 sqlquery rows:', rows)
-    //pool.end();
     if(rows.length === 0){
         return 'not found';
     }else{
         const answer = await checkPassword(obj, rows);
-        console.log(answer);
-        console.log('18 sqlquery rows:', rows)
-        //return await checkPassword(obj, rows );
         return answer;
     }
 }
@@ -27,11 +22,10 @@ async function loginQuery(obj){
     const { email, password } = obj;
     const sql = `SELECT * FROM users WHERE email=$1`;
     const { rows } = await pool.query(sql, [email]);
-    //pool.end();
+
     if(rows.length === 0){
         return 'not found';
-    }else{
-        
+    }else{        
         return rows;
     }
 }
@@ -56,7 +50,7 @@ async function registrationNewUser(obj){
     const email = obj.email;
     const passwordFromFront = obj.password;
     const checkPasswordFromFront = obj.checkPassword;
-    //console.dir( { nickName, email, passwordFromFront } );
+   
     const uniqueEmail = await checkUnique('users', 'email', email);
     const uniqueNickname = await checkUnique('users', 'nickname', nickName);
     const passwordLegth = (passwordFromFront.length >= 7);
@@ -67,7 +61,7 @@ async function registrationNewUser(obj){
         if(uniqueNickname){
             if(passwordLegth){
                 if(even){
-                    //Тут необходимо зделать запрос в базу для регистрации нового клиента
+                    //Тут необходимо cделать запрос в базу для регистрации нового клиента
                     await insertUser(nickName, email, passwordHash)
                     return obj;
                 }else{

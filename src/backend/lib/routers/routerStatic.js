@@ -7,10 +7,10 @@ const routerStatic = async (client) => {
     const statusCode = file.found ? 200 : 404;
     const mimeType = MIME_TYPES[file.ext] || MIME_TYPES.default;
     res.writeHead(statusCode, { 'Content-Type': mimeType });
-    //console.log('9 routerStatic client.session:',client.session)
+    
     let divModalBtnStyle = `style="display: none"`;
     let divModalBtnOutStyle = `style="display: none"`;    
-        console.log('11 routerStatcic client.session', client.session)
+        
         if(client.session){
             divModalBtnStyle = `style="display: none"`;
             divModalBtnOutStyle = `style="display: block"`; 
@@ -21,10 +21,6 @@ const routerStatic = async (client) => {
         const streamModalBtn = new ReplaceText(divModalBtnStyle, /%modalBtnDivDispley%/g);
         const streamModalBtnOut = new ReplaceText(divModalBtnOutStyle, /%modalBtnDivOutDispley%/g)
         file.stream.pipe(streamModalBtn).pipe(streamModalBtnOut).pipe(res);
-        
-    
-   
-    console.log(`${req.method} ${req.url} ${statusCode}`);
 }
 
 module.exports = { routerStatic }

@@ -116,9 +116,9 @@ const registrationForm = new Form('Регистрация',
     )
 
     const errorLoginFormWrongPassword = new Form(
-        "Неверный emaqk или пароль!",
+        `<div class="loader"></div>Неверный пароль!`,
         "form-reg-error",
-        ` <div class="loader"></div> `,
+        ``,
         'modal'
     )
 

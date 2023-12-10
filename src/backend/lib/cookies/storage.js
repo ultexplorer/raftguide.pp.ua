@@ -11,7 +11,6 @@ const safePath = fn => (token, ...args) => {
     }
     const fileName = path.join(PATH, token);
     if(!fileName.startsWith(PATH)){
-        console.log('fileName:', fileName)
         throw new Error('wrong token path')
     }
     return fn(fileName, ...args)
@@ -28,7 +27,6 @@ class Storage extends Map {
        else{
            try{
                const data = await readSession(key);
-               console.log('storage 43 data:', data)
                session = v8.deserialize(data);
                super.set(key, session);
                return session;
@@ -44,7 +42,6 @@ class Storage extends Map {
            try{
                const data = v8.serialize(session);
                await writeSession(key, data);
-               console.log(`Session saved ${key}`);
            }catch(err){
                console.log(`Ошибка в writeSession(key) ${err.name}:${err.message} \n ${err.stack}`)
            }
@@ -52,7 +49,6 @@ class Storage extends Map {
    }
 
    delete(key){
-       console.log(`Session deleted: ${key}`)
        deleteSession(key);
    }
 

@@ -9,8 +9,6 @@ const router = async (client) => {
     }else{
         await routerStatic(client);
     }
-
-
 }
 
 module.exports = { router };
