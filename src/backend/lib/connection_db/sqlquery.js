@@ -5,6 +5,21 @@ const sha1 = require('js-sha1');
 
 const pool = new Pool(config);
 
+const fs = require('fs');
+const path = require('path');
+
+const { STATIC_PATH } = require('../static-modules/static-functions')
+//./src/frontend/static
+//////////////////////////////////////
+
+async function createUserFolder(nickName){
+    fs.mkdir(path.join(STATIC_PATH, '/images/', nickName), err => {
+        if(err) throw err;
+        console.log('18 sqlquery папка', nickName, 'создана')
+    })
+}
+
+///////////////////////////////////////////////
 
 async function checkEmailForLogin(obj){
     const email = obj.email;
@@ -61,8 +76,11 @@ async function registrationNewUser(obj){
         if(uniqueNickname){
             if(passwordLegth){
                 if(even){
-                    //Тут необходимо cделать запрос в базу для регистрации нового клиента
+                    //Тут необходимо зделать запрос в базу для регистрации нового клиента
                     await insertUser(nickName, email, passwordHash)
+                    //здесь необходимо написать функцию создания папки с именем images/nickName
+                    await createUserFolder(nickName)
+                    console.log('STATIC_PATH:',STATIC_PATH)
                     return obj;
                 }else{
                     return { error: { even }}

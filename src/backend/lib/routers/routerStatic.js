@@ -1,5 +1,6 @@
 const {prepareFile, MIME_TYPES} = require("../static-modules/static-functions");
 const { ReplaceText } = require("../dynimic-modules/ReplaceText")
+const { blockUserMenu } = require("../blocks/blockUserMenu")
 
 const routerStatic = async (client) => {
     const { req, res } = client
@@ -10,17 +11,24 @@ const routerStatic = async (client) => {
     
     let divModalBtnStyle = `style="display: none"`;
     let divModalBtnOutStyle = `style="display: none"`;    
-        
+    let userMenu = ''
         if(client.session){
             divModalBtnStyle = `style="display: none"`;
-            divModalBtnOutStyle = `style="display: block"`; 
+            divModalBtnOutStyle = `style="display: block"`;
+            userMenu = await blockUserMenu(client);
         }else{
             divModalBtnStyle = `style="display: block"`;
-            divModalBtnOutStyle = `style="display: none"`; 
+            divModalBtnOutStyle = `style="display: none"`;
+            userMenu = ``
         }  
         const streamModalBtn = new ReplaceText(divModalBtnStyle, /%modalBtnDivDispley%/g);
         const streamModalBtnOut = new ReplaceText(divModalBtnOutStyle, /%modalBtnDivOutDispley%/g)
-        file.stream.pipe(streamModalBtn).pipe(streamModalBtnOut).pipe(res);
+        const streamUserMenu = new ReplaceText(userMenu, /%userMenu%/g)
+
+
+
+        file.stream.pipe(streamUserMenu).pipe(streamModalBtn).pipe(streamModalBtnOut).pipe(res);
+
 }
 
 module.exports = { routerStatic }

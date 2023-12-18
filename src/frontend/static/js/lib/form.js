@@ -58,7 +58,7 @@ const registrationForm = new Form('Регистрация',
                     </div>
                     <button 
                         id="send-registration"
-                        type="submit"
+                        type="button"
                         class="mui-btn mui-btn--raised mui-btn--primary"
             
                         >Зарегестрироваться</button>
